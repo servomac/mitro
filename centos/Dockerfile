@@ -1,6 +1,8 @@
 FROM centos:centos6
 MAINTAINER Toni Pizà <tpiza@habitissimo.com>
 
+ENV NODE_PATH /srv/mitro/browser-ext/api/build/node/lib/node_modules
+
 RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 RUN yum install -y postgresql
 RUN yum install -y postgresql-server
