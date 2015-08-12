@@ -19,6 +19,12 @@ RUN yum install -y tar
 RUN yum install -y unzip
 RUN yum install -y bzip2
 
+
+
+RUN yum install -y mlocate python-setuptools bind-utils
+RUN easy_install argparse mandrill sqlalchemy statsd tornado virtualenv
+
+
 RUN git clone https://github.com/mitro-co/mitro.git /srv/mitro
 
 # apply browser-ext patch
@@ -33,13 +39,13 @@ WORKDIR /srv/mitro/browser-ext/login
 RUN make chrome
 
 # install python 2.7 (this breaks yum and the build of browser-ext)
-WORKDIR /usr/local
-RUN wget http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
-RUN xz -d Python-2.7.6.tar.xz
-RUN tar -xvf Python-2.7.6.tar
-RUN cd Python-2.7.6 && ./configure --prefix=/usr/local
-RUN cd Python-2.7.6 && make && make altinstall
-RUN rm /usr/bin/python && ln -s /usr/local/bin/python2.7 /usr/bin/python
+#WORKDIR /usr/local
+#RUN wget http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
+#RUN xz -d Python-2.7.6.tar.xz
+#RUN tar -xvf Python-2.7.6.tar
+#RUN cd Python-2.7.6 && ./configure --prefix=/usr/local
+#RUN cd Python-2.7.6 && make && make altinstall
+#RUN rm /usr/bin/python && ln -s /usr/local/bin/python2.7 /usr/bin/python
 
 WORKDIR /srv/mitro/mitro-core
 RUN mkdir -p build/postgres
@@ -47,7 +53,7 @@ RUN chown -R postgres:postgres build/postgres
 
 # do not generate random secrets every time server starts
 # https://github.com/mitro-co/mitro/issues/128#issuecomment-129950839 
-RUN sed -i "|<sysproperty key=\"generateSecretsForTest\" value=\"true\"/>|d" build.xml
+RUN sed -i "/<sysproperty key=\"generateSecretsForTest\" value=\"true\"\/>/d" build.xml
 
 COPY ./docker-entrypoint.sh /
 
