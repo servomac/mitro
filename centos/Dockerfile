@@ -47,7 +47,7 @@ RUN chown -R postgres:postgres build/postgres
 
 # do not generate random secrets every time server starts
 # https://github.com/mitro-co/mitro/issues/128#issuecomment-129950839 
-RUN sed -i "s|\(<sysproperty key=\"generateSecretsForTest\" value=\"true\"/>\)||" build.xml
+RUN sed -i "|<sysproperty key=\"generateSecretsForTest\" value=\"true\"/>|d" build.xml
 
 COPY ./docker-entrypoint.sh /
 
