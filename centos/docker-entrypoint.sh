@@ -9,6 +9,7 @@ DDBB="mitro"
 CLASSPATH="java/server/lib/keyczar-0.71f-040513.jar:java/server/lib/gson-2.2.4.jar:java/server/lib/log4j-1.2.17.jar"
 KEYS_PATH="/mitrocore_secrets/sign_keyczar"
 
+# run tests
 ant test
 
 # check the postgres connection and the existence of the database
@@ -20,9 +21,12 @@ fi
 
 # change the postgresql connection string to point to db link
 sed -i "s|postgresql://localhost:5432/${DDBB}|postgresql://${DB_PORT_5432_TCP_ADDR}:5432/${DDBB}?user=postgres\&amp;password=${POSTGRES_PASSWORD}|" /srv/mitro/mitro-core/build.xml
+# do not generate random secrets every time server starts
+# https://github.com/mitro-co/mitro/issues/128#issuecomment-129950839 
+sed -i "/<sysproperty key=\"generateSecretsForTest\" value=\"true\"\/>/d" /srv/mitro/mitro-core/build.xml
+
 
 # generate keys at root dir
-mkdir -p $KEYS_PATH
 java -cp $CLASSPATH org.keyczar.KeyczarTool create --location=$KEYS_PATH --purpose=sign
 java -cp $CLASSPATH org.keyczar.KeyczarTool addkey --location=$KEYS_PATH --status=primary
 
