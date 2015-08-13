@@ -6,32 +6,32 @@ A first attempt to dockerize the [Mitro Password Manager](https://github.com/mit
 
 1. Clone the project and build the mitro and emailer images
 
-```
- git clone https://github.com/servomac/mitro.git
- cd mitro/centos
- docker build -t mitro:centos6 .
+    ```
+    git clone https://github.com/servomac/mitro.git
+    cd mitro/centos
+    docker build -t mitro:centos6 .
 
- cd ../emailer
- docker build -t emailer .
-```
+    cd ../emailer
+    docker build -t emailer .
+    ```
 
 2. Run postgres
 
-```
-  docker run --name=postgres -e POSTGRES_PASSWORD="AGOODPASS" -d postgres
-```
+   ```
+   docker run --name=postgres -e POSTGRES_PASSWORD="AGOODPASS" -d postgres
+   ```
 
 3. Execute the mitro server
 
-```
-  docker run --restart='always' \
-             --name mitro \
-             --link=postgres:db \
-             -e POSTGRES_PASSWORD="AGOODPASS" \
-             -e DOMAIN="mitro.domain.com" \
-             -p 8443:8443 \
-             -d mitro:centos6
-```
+   ```
+   docker run --restart='always' \
+              --name mitro \
+              --link=postgres:db \
+              -e POSTGRES_PASSWORD="AGOODPASS" \
+              -e DOMAIN="mitro.domain.com" \
+              -p 8443:8443 \
+              -d mitro:centos6
+    ```
 
 4. Execute the emailer container
 
