@@ -41,6 +41,7 @@ A first attempt to dockerize the [Mitro Password Manager](https://github.com/mit
              --link=postgres:db \
              -e POSTGRES_PASSWORD="AGOODPASS" \
              -e MAIL_ADDR="172.17.42.1" \
+             -e DOMAIN="mitro.domain.com" \
              -d emailer
 ```
 
