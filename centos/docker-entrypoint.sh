@@ -1,15 +1,25 @@
 #!/bin/bash
 
+# check environment variables
+[ -z "${DB_PORT_5432_TCP_ADDR}" ] && echo "The Postgres container is not correctly linked! Add --link postgres:db to the docker run parameters!" && exit 1
+[ -z "${POSTGRES_PASSWORD}" ] && echo "Postgres password undefined! Add -e POSTGRES_PASSWORD=\"blabla\" to the docker run parameters!" && exit 1
+[ -z "${DOMAIN}" ] && echo "Domain undefined! Add -e DOMAIN=\"ip or domain name\" to the docker run parameters!" && exit 1
+
+DDBB="mitro"
 CLASSPATH="java/server/lib/keyczar-0.71f-040513.jar:java/server/lib/gson-2.2.4.jar:java/server/lib/log4j-1.2.17.jar"
 KEYS_PATH="/mitrocore_secrets/sign_keyczar"
 
 ant test
 
-# TODO supervisor
-su --login - postgres --command "postgres -D /srv/mitro/mitro-core/build/postgres/ &"
-sleep 2s
-su --login - postgres --command "psql -c 'CREATE USER root with CREATEROLE superuser'"
-su --login - postgres --command "createdb mitro -U root"
+# check the postgres connection and the existence of the database
+if [ "`PGPASSWORD="${POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -lqt | cut -d \| -f 1 | grep -w ${DDBB} | wc -l`" -eq "0" ]; then
+        echo "Database ${DDBB} does not exist!"
+        PGPASSWORD="${POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -c "CREATE DATABASE ${DDBB} WITH OWNER postgres ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE='en_US.utf8'"
+fi
+
+
+# change the postgresql connection string to point to db link
+sed -i "s|postgresql://localhost:5432/${DDBB}|postgresql://${DB_PORT_5432_TCP_ADDR}:5432/${DDBB}?user=postgres\&amp;password=${POSTGRES_PASSWORD}|" /srv/mitro/mitro-core/build.xml
 
 # generate keys at root dir
 mkdir -p $KEYS_PATH
@@ -17,8 +27,7 @@ java -cp $CLASSPATH org.keyczar.KeyczarTool create --location=$KEYS_PATH --purpo
 java -cp $CLASSPATH org.keyczar.KeyczarTool addkey --location=$KEYS_PATH --status=primary
 
 # generate certs
-DOMAIN="192.168.1.234"			# TODO as environment
-export PASSPHRASE="password"
+export PASSPHRASE="password"		# Main.java:474 https://github.com/mitro-co/mitro/blob/master/mitro-core/java/server/src/co/mitro/core/server/Main.java
 
 subj="
 C=SP
