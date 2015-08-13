@@ -25,25 +25,25 @@ A first attempt to dockerize the [Mitro Password Manager](https://github.com/mit
 
    ```
    docker run --restart='always' \
-              --name mitro \
-              --link=postgres:db \
-              -e POSTGRES_PASSWORD="AGOODPASS" \
-              -e DOMAIN="mitro.domain.com" \
-              -p 8443:8443 \
-              -d mitro:centos6
+               --name mitro \
+               --link=postgres:db \
+               -e POSTGRES_PASSWORD="AGOODPASS" \
+               -e DOMAIN="mitro.domain.com" \
+               -p 8443:8443 \
+               -d mitro:centos6
     ```
 
 4. Execute the emailer container
 
-```
-  docker run --restart='always' \
-             --name emailer \
-             --link=postgres:db \
-             -e POSTGRES_PASSWORD="AGOODPASS" \
-             -e MAIL_ADDR="172.17.42.1" \
-             -e DOMAIN="mitro.domain.com" \
-             -d emailer
-```
+    ```
+    docker run --restart='always' \
+                --name emailer \
+                --link=postgres:db \
+                -e POSTGRES_PASSWORD="AGOODPASS" \
+                -e MAIL_ADDR="172.17.42.1" \
+                -e DOMAIN="mitro.domain.com" \
+                -d emailer
+    ```
 
 ## Generate the browser extensions
 
