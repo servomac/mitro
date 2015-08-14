@@ -52,6 +52,10 @@ openssl pkcs12 -export -inkey server.key -in server.crt -name mitro_server -out 
 cp server.jks /srv/mitro/mitro-core/build/java/src/co/mitro/core/server/debug_keystore.jks
 cp server.jks /srv/mitro/mitro-core/java/server/src/co/mitro/core/server/debug_keystore.jks
 
+# configure the browser extensions
+sed -i "s/www.mitro.co\|mitroaccess.com\|secondary.mitro.ca/${DOMAIN}/" /srv/mitro/browser-ext/login/common/config/config.release.js
+sed -i "s/443/8443/" /srv/mitro/browser-ext/login/common/config/config.release.js
+
 # exec command
 cd /srv/mitro/mitro-core
 exec "$@"
