@@ -27,12 +27,13 @@ RUN mkdir -p /mitrocore_secrets/sign_keyczar
 WORKDIR /srv/mitro
 RUN git clone https://github.com/mitro-co/mitro.git /srv/mitro
 
-# apply browser-ext patch
+# apply browser-ext patch and static files patch
 COPY ./lru_patch.diff /srv/mitro/
+COPY ./static_files.diff /srv/mitro/
 RUN git apply lru_patch.diff
+RUN git apply static_files.diff
 
 WORKDIR /srv/mitro/mitro-core
-RUN ./build.sh
 
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]

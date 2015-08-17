@@ -1,0 +1,30 @@
+diff --git a/mitro-core/java/server/src/co/mitro/core/server/Main.java b/mitro-core/java/server/src/co/mitro/core/server/Main.java
+index 7ff7b94..2abd624 100644
+--- a/mitro-core/java/server/src/co/mitro/core/server/Main.java
++++ b/mitro-core/java/server/src/co/mitro/core/server/Main.java
+@@ -50,6 +50,7 @@ import org.eclipse.jetty.server.Slf4jRequestLog;
+ import org.eclipse.jetty.server.SslConnectionFactory;
+ import org.eclipse.jetty.server.handler.HandlerCollection;
+ import org.eclipse.jetty.server.handler.RequestLogHandler;
++import org.eclipse.jetty.server.handler.ResourceHandler;
+ import org.eclipse.jetty.servlet.ServletContextHandler;
+ import org.eclipse.jetty.servlet.ServletHolder;
+ import org.eclipse.jetty.util.component.LifeCycle;
+@@ -394,9 +395,15 @@ public class Main {
+     requestLog.setLogTimeZone("UTC");
+     requestLogHandler.setRequestLog(requestLog);
+ 
+-    // Install both the servlet handler and the logging handler
++    // Handle static file requests
++    ResourceHandler staticFiles = new ResourceHandler();
++    staticFiles.setDirectoriesListed(true);
++    staticFiles.setWelcomeFiles(new String[]{"index.html"});
++    staticFiles.setResourceBase("html");
++
++    // Install the servlet handler, logging handler and static file support
+     HandlerCollection handlers = new HandlerCollection();
+-    handlers.setHandlers(new Handler[]{context, requestLogHandler});
++    handlers.setHandlers(new Handler[]{context, requestLogHandler, staticFiles});
+ 
+     OldJsonData ojd = OldJsonData.createFromStream(
+         Main.class.getResourceAsStream("service_list.json"));
