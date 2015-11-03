@@ -33,6 +33,10 @@ COPY ./static_files.diff /srv/mitro/
 RUN git apply lru_patch.diff
 RUN git apply static_files.diff
 
+# add static files
+RUN mkdir /html
+COPY templates/verified.html /html/
+
 WORKDIR /srv/mitro/mitro-core
 
 COPY ./docker-entrypoint.sh /

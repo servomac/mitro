@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # check environment variables
-[ -z "${DB_PORT_5432_TCP_ADDR}" ] && echo "The Postgres container is not correctly linked! Add --link postgres:db to the docker run parameters!" && exit 1
-[ -z "${POSTGRES_PASSWORD}" ] && echo "Postgres password undefined! Add -e POSTGRES_PASSWORD=\"blabla\" to the docker run parameters!" && exit 1
+[ -z "${DB_PORT_5432_TCP_ADDR}" ] && echo "The Postgres container is not correctly linked! Add --link postgres_mitro:db to the docker run parameters!" && exit 1
+[ -z "${DB_ENV_POSTGRES_PASSWORD}" ] && echo "Postgres password undefined! Add --link postgres_mitro:db!" && exit 1
 [ -z "${DOMAIN}" ] && echo "Domain undefined! Add -e DOMAIN=\"ip or domain name\" to the docker run parameters!" && exit 1
 
 DDBB="mitro"
@@ -10,17 +10,17 @@ CLASSPATH="java/server/lib/keyczar-0.71f-040513.jar:java/server/lib/gson-2.2.4.j
 KEYS_PATH="/mitrocore_secrets/sign_keyczar"
 
 # run tests
-ant test
+# ant test
 
 # check the postgres connection and the existence of the database
-if [ "`PGPASSWORD="${POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -lqt | cut -d \| -f 1 | grep -w ${DDBB} | wc -l`" -eq "0" ]; then
+if [ "`PGPASSWORD="${DB_ENV_POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -lqt | cut -d \| -f 1 | grep -w ${DDBB} | wc -l`" -eq "0" ]; then
         echo "Database ${DDBB} does not exist!"
-        PGPASSWORD="${POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -c "CREATE DATABASE ${DDBB} WITH OWNER postgres ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE='en_US.utf8'"
+        PGPASSWORD="${DB_ENV_POSTGRES_PASSWORD}" psql -h${DB_PORT_5432_TCP_ADDR} -Upostgres -c "CREATE DATABASE ${DDBB} WITH OWNER postgres ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE='en_US.utf8'"
 fi
 
 
 # change the postgresql connection string to point to db link
-sed -i "s|postgresql://localhost:5432/${DDBB}|postgresql://${DB_PORT_5432_TCP_ADDR}:5432/${DDBB}?user=postgres\&amp;password=${POSTGRES_PASSWORD}|" /srv/mitro/mitro-core/build.xml
+sed -i "s|postgresql://localhost:5432/${DDBB}|postgresql://${DB_PORT_5432_TCP_ADDR}:5432/${DDBB}?user=postgres\&amp;password=${DB_ENV_POSTGRES_PASSWORD}|" /srv/mitro/mitro-core/build.xml
 # do not generate random secrets every time server starts
 # https://github.com/mitro-co/mitro/issues/128#issuecomment-129950839 
 sed -i "/<sysproperty key=\"generateSecretsForTest\" value=\"true\"\/>/d" /srv/mitro/mitro-core/build.xml
