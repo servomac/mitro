@@ -6,6 +6,7 @@
 [ -z "${DOMAIN}" ] && echo "Domain undefined! Add -e DOMAIN=\"ip or domain name\" to the docker run parameters!" && exit 1
 
 DDBB="mitro"
+MITRO_PORT=${MITRO_PORT:-8443}
 CLASSPATH="java/server/lib/keyczar-0.71f-040513.jar:java/server/lib/gson-2.2.4.jar:java/server/lib/log4j-1.2.17.jar"
 KEYS_PATH="/mitrocore_secrets/sign_keyczar"
 
@@ -54,7 +55,7 @@ cp server.jks /srv/mitro/mitro-core/java/server/src/co/mitro/core/server/debug_k
 
 # configure the browser extensions
 sed -i "s/www.mitro.co\|mitroaccess.com\|secondary.mitro.ca/${DOMAIN}/" /srv/mitro/browser-ext/login/common/config/config.release.js
-sed -i "s/443/8443/" /srv/mitro/browser-ext/login/common/config/config.release.js
+sed -i "s/\(\(MITRO\|MITRO_AGENT\)_PORT =\) 443/\1 ${MITRO_PORT}/" /srv/mitro/browser-ext/login/common/config/config.release.js
 
 # exec command
 cd /srv/mitro/mitro-core
