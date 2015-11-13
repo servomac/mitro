@@ -61,6 +61,12 @@ Once you have the server up and running, you can generate the browser extensions
 
 Install it and add the certificate. TODO.
 
+## Backup
+
+```
+docker run -it --link postgres_mitro:postgres --rm postgres sh -c 'PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD exec pg_dump -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres mitro' | bzip2 > mitro.sql.bz2
+```
+
 ## References
 
 
