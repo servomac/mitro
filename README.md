@@ -18,29 +18,27 @@ A first attempt to dockerize the [Mitro Password Manager](https://github.com/mit
 2. Run postgres
 
    ```
-   docker run --name=postgres -e POSTGRES_PASSWORD="AGOODPASS" -d postgres
+   docker run --name mitro-postgres -e POSTGRES_PASSWORD="AGOODPASS" -d postgres
    ```
 
 3. Execute the mitro server
 
    ```
-   docker run --restart='always' \
+   docker run --restart 'always' \
                --name mitro \
-               --link=postgres:db \
-               -e POSTGRES_PASSWORD="AGOODPASS" \
+               --link mitro-postgres:db \
                -e DOMAIN="mitro.domain.com" \
-               -p 8443:8443 \
+               -p 0.0.0.0:8443:8443 \
                -d mitro:centos6
     ```
 
 4. Execute the emailer container
 
     ```
-    docker run --restart='always' \
-                --name emailer \
-                --link=postgres:db \
-                -e POSTGRES_PASSWORD="AGOODPASS" \
-                -e MAIL_ADDR="172.17.42.1" \
+    docker run --restart 'always' \
+                --name emailer-mitro \
+                --link mitro-postgres:db \
+                -e MANDRILL_API_KEY="apikey" \
                 -e DOMAIN="mitro.domain.com" \
                 -d emailer
     ```
@@ -59,12 +57,12 @@ Once you have the server up and running, you can generate the browser extensions
  
 ```
 
-Install it and add the certificate. TODO.
+Install the extension in your desired browser and add the certificate. TODO.
 
 ## Backup
 
 ```
-docker run -it --link postgres_mitro:postgres --rm postgres sh -c 'PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD exec pg_dump -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres mitro' | bzip2 > mitro.sql.bz2
+docker run -it --link mitro-postgres:db --rm postgres sh -c 'PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD exec pg_dump -h "$DB_PORT_5432_TCP_ADDR" -p "$DB_PORT_5432_TCP_PORT" -U postgres mitro' | bzip2 > mitro.sql.bz2
 ```
 
 ## References

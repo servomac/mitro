@@ -17,6 +17,7 @@ RUN yum install -y wget
 RUN yum install -y tar
 RUN yum install -y unzip
 RUN yum install -y bzip2
+RUN npm -g install npm
 
 RUN yum install -y python-setuptools
 RUN easy_install argparse
