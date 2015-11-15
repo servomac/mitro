@@ -37,12 +37,10 @@ then
     subj="/CN=ES/ST=IllesBalears/O=Habitissimo/localityName=Palma/commonName=$DOMAIN/organizationalUnitName=devops/emailAddress=developers@habitissimo.com"
 
     openssl genrsa -des3 -out server.key -passout env:PASSPHRASE 2048
-    echo "=req ($subj)"
     openssl req -new -sha256 -key server.key -out server.csr -passin env:PASSPHRASE -subj "$subj"
-    echo "=x509"
     openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt -passin env:PASSPHRASE
     openssl pkcs12 -export -inkey server.key -in server.crt -name mitro_server -out server.p12 -passin env:PASSPHRASE -passout env:PASSPHRASE
-    /usr/lib/jvm/java-1.7.0-openjdk.x86_64/jre/bin/keytool -importkeystore -srckeystore server.p12 -srcstoretype pkcs12 -srcalias mitro_server -destkeystore server.jks -deststoretype jks -deststorepass password -destalias jetty -srcstorepass password
+    /usr/lib/jvm/java-1.7.0-openjdk.x86_64/jre/bin/keytool -importkeystore -srckeystore server.p12 -srcstoretype pkcs12 -srcalias mitro_server -destkeystore server.jks -deststoretype jks -deststorepass password -destalias jetty -srcstorepass $PASSPHRASE
 
     ant test
     cp server.jks /srv/mitro/mitro-core/build/java/src/co/mitro/core/server/debug_keystore.jks
