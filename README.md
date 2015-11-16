@@ -1,6 +1,6 @@
 # Mitro over CentOS
 
-A first attempt to dockerize the [Mitro Password Manager](https://github.com/mitro-co/mitro). I claim no authority in the field, i'm just trying to set up a simple deployment process for a Mitro server. Contributions are welcomed!
+A first attempt to dockerize the [Mitro Password Manager](https://github.com/mitro-co/mitro) after being [released](http://labs.mitro.co/2014/07/31/mitro-is-joining-twitter/) under GPL. I claim no authority in the field, i'm just trying to set up a simple deployment process for a Mitro server. Contributions are welcomed!
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ A first attempt to dockerize the [Mitro Password Manager](https://github.com/mit
 
     ```
     docker run --restart 'always' \
-                --name emailer-mitro \
+                --name mitro-emailer \
                 --link mitro-postgres:db \
                 -e MANDRILL_API_KEY="apikey" \
                 -e DOMAIN="mitro.domain.com" \
@@ -68,6 +68,6 @@ docker run -it --link mitro-postgres:db --rm postgres sh -c 'PGPASSWORD=$DB_ENV_
 ## References
 
 
-· [Building/running a server on Linux](https://github.com/mitro-co/mitro/issues/56)
-· [Mitro Login Manager On-Premise](https://www.hashtagsecurity.com/mitro-login-manager-on-premise-2/)
-· [Ansible configurations for Mitro](https://github.com/mitro-co/mitro/blob/ae43f8346de6c3e9818988a08cea448393e4af52/mitro-core/production/ansible/README.md)
+* [Building/running a server on Linux](https://github.com/mitro-co/mitro/issues/56)
+* [Mitro Login Manager On-Premise](https://www.hashtagsecurity.com/mitro-login-manager-on-premise-2/)
+* [Ansible configurations for Mitro](https://github.com/mitro-co/mitro/blob/ae43f8346de6c3e9818988a08cea448393e4af52/mitro-core/production/ansible/README.md)
